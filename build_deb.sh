@@ -5,10 +5,11 @@ cp -vf photosort deb/photo_sort/usr/bin/photosort
 
 chmod +x deb/photo_sort/usr/bin/photosort
 
-echo "Enter Version (x.x-x.x):"
+echo "Previous $(cat deb/photo_sort/DEBIAN/control | grep '^Version:')"
+echo "Enter new version (x.x-x.x):"
 read VERSION
 
-rm -rfv deb/parentalcontrol/DEBIAN/control 
+rm -rfv deb/photo_sort/DEBIAN/control 
 
 CONTROL_FILE="Package: photosort
 Version: $VERSION
