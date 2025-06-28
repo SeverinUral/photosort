@@ -90,6 +90,9 @@ def main():
             except:
                 pass
 
+        # TODO
+        # replace subprocess and mediainfo to pymediainfo
+        # https://pypi.org/project/pymediainfo/
         if isfile(file_path) and splitext(file_path)[-1].lower() in mp4_mime:
             # Video files
             try:
@@ -104,6 +107,7 @@ def main():
                 d = datetime.strptime(s, patern2)
             except:
                 pass
+        # end TODO
 
         try:
             full_path = pht.format(d.year, d.month, datetime.strftime(d, "%B"))
