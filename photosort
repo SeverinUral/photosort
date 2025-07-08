@@ -10,7 +10,11 @@ import configparser
 from datetime import *
 from os.path import join, isfile, splitext
 
-from pymediainfo import MediaInfo
+try:
+    from pymediainfo import MediaInfo
+except Exception as e:
+    print("{}\nInstall module 'pymediainfo', use 'pip install pymediainfo'".format(e))
+    exit()
 
 try:
     import exifread
@@ -51,9 +55,9 @@ def read_conf():
 def argparse_mm():
     p = argparse.ArgumentParser(description="photosort help page")
 
-    p.add_argument("--copy", dest="copy",
-                   action='store_true', help='Copy photos')
-    p.add_argument("--move", dest="move", action='store_true',
+    p.add_argument("--copy", dest="copy", action='store_true', 
+                   help='Copy photos')
+    p.add_argument("--move", dest="move", action='store_true', 
                    help='Move photosort')
 
     return p.parse_args()
@@ -64,6 +68,7 @@ def main():
     if not check_config_file():
         return
 
+    # parse cli options
     args = argparse_mm()
 
     # absolute path to src image folder
@@ -84,7 +89,6 @@ def main():
     # iteration of all files in src folder
     for f in os.listdir(fPath):
         # absolute path to file
-
         file_path = join(fPath, f)
 
         if isfile(file_path) and splitext(file_path)[-1].lower() in jpeg_mime:
@@ -133,7 +137,7 @@ def main():
                 except Exception as e:
                     print("File {} are not copied. {}".format(f, e))
             else:
-                print("Bad usage. Use '--copy' or '-move' option")
+                print("Bad usage. Use '--copy' or '--move' option")
                 return       
 
         d = None
