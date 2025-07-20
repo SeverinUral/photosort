@@ -1,9 +1,0 @@
-Package: photosort
-Version: 3.0-0.6
-Section: graphics
-Architecture: all
-Priority: optional
-Depends: python3, python3-pip, python3-exifread, python3-pymediainfo
-Maintainer: Alex <alexfomg@gmail.com>
-Description: Programm for sorting shots by creation date
-Installed-Size: 21780

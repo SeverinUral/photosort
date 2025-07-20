@@ -1,12 +1,14 @@
 #!/bin/bash
 # Fomenko A V  2025 (c)
+mkdir -pv deb/photo_sort/{DEBIAN/,usr/bin/}
 
 cp -vf photosort deb/photo_sort/usr/bin/photosort
-
 chmod +x deb/photo_sort/usr/bin/photosort
 
-echo "Previous $(grep '^Version:' deb/photo_sort/DEBIAN/control)"
-read -p "Enter new version (x.x-x.x): " VERSION
+echo "Previous version $(ls *.deb | grep -o '[0-9]*.[0-9]*-[0-9]*.[0-9]*')"
+read -p "Enter Version (x.x-x.x): " VERSION
+
+rm -rfv *.deb
 
 CONTROL_FILE="Package: photosort
 Version: $VERSION
@@ -21,4 +23,11 @@ Installed-Size: $(du -sb deb/photo_sort | grep -o '^[0-9]*')"
 echo "$CONTROL_FILE" > deb/photo_sort/DEBIAN/control 
 
 cd deb/
-./make_deb.sh 
+
+fakeroot dpkg-deb --build photo_sort .
+
+mv *.deb ..
+
+cd ..
+
+rm -rf deb
