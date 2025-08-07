@@ -7,23 +7,23 @@ import os
 import shutil
 import argparse
 import configparser
-from datetime import *
+from datetime import datetime
 from os.path import join, isfile, splitext
 
 try:
     from pymediainfo import MediaInfo
 except Exception as e:
-    print("{}\nInstall module 'pymediainfo', use 'pip install pymediainfo'".format(e))
+    print(f"{e}\nInstall module 'pymediainfo', use 'pip install pymediainfo'")
     exit()
 
 try:
     import exifread
 except Exception as e:
-    print("{}\nInstall module 'exifread', use 'pip install exifread'".format(e))
+    print(f"{e}\nInstall module 'exifread', use 'pip install exifread'")
     exit()
 
-CONFIG_DIR = join(os.environ['HOME'], ".config/photosort")
-CONFIG_FILE = join(os.environ['HOME'], ".config/photosort/config.conf")
+CONFIG_DIR = join(os.environ["HOME"], ".config/photosort")
+CONFIG_FILE = join(os.environ["HOME"], ".config/photosort/config.conf")
 
 
 def check_config_file():
@@ -31,16 +31,16 @@ def check_config_file():
         return True
 
     config = configparser.ConfigParser()
-    config['Main'] = {"path_to_save": join(os.environ['HOME'], "Photo")}
+    config["Main"] = {"path_to_save": join(os.environ["HOME"], "Photo")}
 
     os.makedirs(CONFIG_DIR, exist_ok=True)
-    with open(CONFIG_FILE, 'w') as configfile:
+    with open(CONFIG_FILE, "w") as configfile:
         config.write(configfile)
 
     print("Default config are create now!")
     ans = input("Continue? (y/n)\n")
 
-    if ans.lower() == 'y':
+    if ans.lower() == "y":
         return True
 
     return False
@@ -49,16 +49,20 @@ def check_config_file():
 def read_conf():
     config = configparser.ConfigParser()
     config.read(CONFIG_FILE)
-    return config["Main"].get('path_to_save')
+    return config["Main"].get("path_to_save")
 
 
 def argparse_mm():
     p = argparse.ArgumentParser(description="photosort help page")
 
-    p.add_argument("--copy", dest="copy", action='store_true', 
-                   help='Copy photos')
-    p.add_argument("--move", dest="move", action='store_true', 
-                   help='Move photosort')
+    p.add_argument("--copy",
+                   dest="copy",
+                   action="store_true",
+                   help="Copy photos")
+    p.add_argument("--move",
+                   dest="move",
+                   action="store_true",
+                   help="Move photosort")
 
     return p.parse_args()
 
@@ -75,14 +79,14 @@ def main():
     fPath = os.curdir
 
     # absolute path to Photo storage folder
-    pht = join(read_conf(), '{}/{} {}')
+    pht = join(read_conf(), "{}/{} {}")
 
     # counter
     i = 0
 
     # from str to DateTime parse patterns
     patern = "%Y:%m:%d %H:%M:%S"
-    patern2 = "%Y-%m-%d %H:%M:%S UTC "  # 2023-08-26 09:13:38 UTC
+    patern2 = "%Y-%m-%d %H:%M:%S UTC "
     jpeg_mime = [".jpg", ".jfif", ".jpe", ".jpeg"]
     mp4_mime = [".mp4"]
 
@@ -98,27 +102,27 @@ def main():
                 tags_EXIF = {}
 
                 # reading EXIF tags
-                with open(file_path, 'rb') as img_file:
+                with open(file_path, "rb") as img_file:
                     tags_EXIF = exifread.process_file(img_file)
 
                 # parse date from EXIF info
                 s = str(tags_EXIF.get("Image DateTime"))
                 d = datetime.strptime(s, patern)
-            except:
-                pass
+            except Exception as e:
+                print(e)
 
         if isfile(file_path) and splitext(file_path)[-1].lower() in mp4_mime:
             # Video files
             try:
                 mediainfo = MediaInfo.parse(file_path)
                 d = datetime.strptime(mediainfo.tracks[0].tagged_date, patern2)
-            except:
-                pass
+            except Exception as e:
+                print(e)
 
         try:
             full_path = pht.format(d.year, d.month, datetime.strftime(d, "%B"))
-        except:
-            pass
+        except Exception as e:
+            print(e)
         else:
             os.makedirs(full_path, exist_ok=True)
 
@@ -138,13 +142,13 @@ def main():
                     print("File {} are not copied. {}".format(f, e))
             else:
                 print("Bad usage. Use '--copy' or '--move' option")
-                return       
+                return
 
         d = None
 
     print(i)
-    return(0)
+    return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
