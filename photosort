@@ -85,8 +85,8 @@ def main():
     i = 0
 
     # from str to DateTime parse patterns
-    patern = "%Y:%m:%d %H:%M:%S"
-    patern2 = "%Y-%m-%d %H:%M:%S UTC "
+    patern_image_file = "%Y:%m:%d %H:%M:%S"
+    patern_video_file = "%Y-%m-%d %H:%M:%S UTC"
     jpeg_mime = [".jpg", ".jfif", ".jpe", ".jpeg"]
     mp4_mime = [".mp4"]
 
@@ -107,7 +107,7 @@ def main():
 
                 # parse date from EXIF info
                 s = str(tags_EXIF.get("Image DateTime"))
-                d = datetime.strptime(s, patern)
+                d = datetime.strptime(s, patern_image_file)
             except Exception as e:
                 print(e)
 
@@ -115,7 +115,8 @@ def main():
             # Video files
             try:
                 mediainfo = MediaInfo.parse(file_path)
-                d = datetime.strptime(mediainfo.tracks[0].tagged_date, patern2)
+                video_date_time = mediainfo.tracks[0].tagged_date.strip()
+                d = datetime.strptime(video_date_time, patern_video_file)
             except Exception as e:
                 print(e)
 
